@@ -1,0 +1,143 @@
+{
+  "info": {
+    "name": "Express Routing App",
+    "description": "Коллекция запросов для тестирования Express приложения",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Пользователи",
+      "item": [
+        {
+          "name": "Получить всех пользователей",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "http://localhost:3000/api/users"
+          }
+        },
+        {
+          "name": "Получить пользователя по ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "http://localhost:3000/api/users/1"
+          }
+        },
+        {
+          "name": "Создать нового пользователя",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Анна Сидорова\",\n  \"email\": \"anna@mail.ru\",\n  \"age\": 28\n}"
+            },
+            "url": "http://localhost:3000/api/users"
+          }
+        },
+        {
+          "name": "Обновить пользователя",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Иван Обновленный\",\n  \"age\": 26\n}"
+            },
+            "url": "http://localhost:3000/api/users/1"
+          }
+        },
+        {
+          "name": "Удалить пользователя",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "http://localhost:3000/api/users/2"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Товары",
+      "item": [
+        {
+          "name": "Получить все товары",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "http://localhost:3000/api/products"
+          }
+        },
+        {
+          "name": "Получить товары с фильтрацией",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "http://localhost:3000/api/products?category=Электроника&minPrice=10000"
+          }
+        },
+        {
+          "name": "Получить товар по ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "http://localhost:3000/api/products/1"
+          }
+        },
+        {
+          "name": "Создать новый товар",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Наушники\",\n  \"price\": 5000,\n  \"category\": \"Электроника\"\n}"
+            },
+            "url": "http://localhost:3000/api/products"
+          }
+        },
+        {
+          "name": "Обновить товар",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Ноутбук игровой\",\n  \"price\": 75000\n}"
+            },
+            "url": "http://localhost:3000/api/products/1"
+          }
+        },
+        {
+          "name": "Удалить товар",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "http://localhost:3000/api/products/3"
+          }
+        }
+      ]
+    }
+  ]
+}
