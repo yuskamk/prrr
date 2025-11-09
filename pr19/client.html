@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тестовый клиент API</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            color: white;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .server-status {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .status-item {
+            background: rgba(255,255,255,0.9);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            min-width: 150px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .status-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .online { color: #27ae60; }
+        .offline { color: #e74c3c; }
+        
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        @media (max-width: 768px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .card h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #34495e;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #bdc3c7;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            margin-right: 10px;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+        }
+        
+        .response-area {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+        }
+        
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            background: white;
+            border-radius: 10px;
+            padding: 5px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .tab {
+            flex: 1;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+        
+        .tab.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .endpoint-list {
+            list-style: none;
+        }
+        
+        .endpoint-list li {
+            background: #f8f9fa;
+            margin: 8px 0;
+            padding: 12px;
+            border-radius: 6px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .method {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 12px;
+            margin-right: 10px;
+        }
+        
+        .get { background: #d4edda; color: #155724; }
+        .post { background: #d1ecf1; color: #0c5460; }
+        .put { background: #fff3cd; color: #856404; }
+        .delete { background: #f8d7da; color: #721c24; }
+        
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        
+        .status-2xx { background: #27ae60; color: white; }
+        .status-4xx { background: #e74c3c; color: white; }
+        .status-5xx { background: #f39c12; color: white; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🧪 Тестовый клиент API</h1>
+            <p class="subtitle">Интерактивная панель для тестирования REST API</p>
+        </header>
+
+        <div class="server-status">
+            <div class="status-item">
+                <div class="status-value online" id="basicStatus">🟢 Online</div>
+                <div>Базовый сервер</div>
+            </div>
+            <div class="status-item">
+                <div class="status-value online" id="advancedStatus">🟢 Online</div>
+                <div>Продвинутый сервер</div>
+            </div>
+            <div class="status-item">
+                <div class="status-value" id="requestCount">0</div>
+                <div>Всего запросов</div>
+            </div>
+        </div>
+
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab('basic')">👥 Базовый API</div>
+            <div class="tab" onclick="switchTab('advanced')">⚡ Продвинутый API</div>
+        </div>
+
+        <div class="dashboard">
+            <!-- Базовый сервер -->
+            <div class="tab-content active" id="basic-tab">
+                <div class="card">
+                    <h2>👤 Управление пользователями</h2>
+                    
+                    <div class="form-group">
+                        <label>Действие:</label>
+                        <select id="userAction" onchange="updateUserForm()">
+                            <option value="getAll">Получить всех</option>
+                            <option value="getById">Получить по ID</option>
+                            <option value="create">Создать</option>
+                            <option value="update">Обновить</option>
+                            <option value="delete">Удалить</option>
+                        </select>
+                    </div>
+
+                    <div id="userForm">
+                        <!-- Форма обновится динамически -->
+                    </div>
+
+                    <button class="btn" onclick="executeUserAction()">Выполнить</button>
+                </div>
+
+                <div class="card">
+                    <h2>📦 Управление товарами</h2>
+                    
+                    <div class="form-group">
+                        <label>Действие:</label>
+                        <select id="productAction" onchange="toggleProductId()">
+                            <option value="getAll">Все товары</option>
+                            <option value="getById">Товар по ID</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" id="productIdGroup" style="display: none;">
+                        <label>ID товара:</label>
+                        <input type="number" id="productId" placeholder="Введите ID" min="1">
+                    </div>
+
+                    <button class="btn btn-success" onclick="executeProductAction()">Получить</button>
+
+                    <div class="form-group" style="margin-top: 20px;">
+                        <label>🔍 Поиск:</label>
+                        <input type="text" id="searchQuery" placeholder="Введите запрос...">
+                        <button class="btn" onclick="executeSearch()" style="margin-top: 10px;">Искать</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Продвинутый сервер -->
+            <div class="tab-content" id="advanced-tab">
+                <div class="card">
+                    <h2>✅ Управление задачами</h2>
+                    
+                    <div class="form-group">
+                        <label>Действие:</label>
+                        <select id="taskAction" onchange="updateTaskForm()">
+                            <option value="getAll">Все задачи</option>
+                            <option value="create">Создать</option>
+                            <option value="update">Обновить</option>
+                            <option value="delete">Удалить</option>
+                        </select>
+                    </div>
+
+                    <div id="taskForm">
+                        <!-- Форма обновится динамически -->
+                    </div>
+
+                    <button class="btn" onclick="executeTaskAction()">Выполнить</button>
+                </div>
+
+                <div class="card">
+                    <h2>📊 Информация</h2>
+                    
+                    <button class="btn" onclick="getServerStats()" style="margin-bottom: 10px;">📈 Статистика</button>
+                    <button class="btn btn-success" onclick="getServerInfo()">ℹ️ Информация</button>
+
+                    <div style="margin-top: 20px;">
+                        <h3>📋 Endpoints</h3>
+                        <ul class="endpoint-list">
+                            <li><span class="method get">GET</span> /api/tasks</li>
+                            <li><span class="method post">POST</span> /api/tasks</li>
+                            <li><span class="method put">PUT</span> /api/tasks/:id</li>
+                            <li><span class="method delete">DELETE</span> /api/tasks/:id</li>
+                            <li><span class="method get">GET</span> /api/stats</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>📡 Ответ сервера</h2>
+            <div class="response-area" id="response">
+                {/* Ответ появится здесь после запроса */}
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let requestCount = 0;
+        const BASIC_SERVER = 'http://localhost:3000';
+        const ADVANCED_SERVER = 'http://localhost:3001';
+
+        // Инициализация
+        document.addEventListener('DOMContentLoaded', function() {
+            updateUserForm();
+            updateTaskForm();
+            checkServersStatus();
+            setInterval(checkServersStatus, 30000);
+        });
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById(tabName + '-tab').classList.add('active');
+        }
+
+        function updateUserForm() {
+            const action = document.getElementById('userAction').value;
+            const formDiv = document.getElementById('userForm');
+            let html = '';
+
+            switch(action) {
+                case 'getById':
+                    html = `<div class="form-group">
+                        <label>ID пользователя:</label>
+                        <input type="number" id="userId" placeholder="Введите ID" min="1">
+                    </div>`;
+                    break;
+                case 'create':
+                    html = `<div class="form-group">
+                        <label>Имя:</label>
+                        <input type="text" id="userName" placeholder="Введите имя">
+                    </div>
+                    <div class="form-group">
+                        <label>Email:</label>
+                        <input type="email" id="userEmail" placeholder="Введите email">
+                    </div>`;
+                    break;
+                case 'update':
+                    html = `<div class="form-group">
+                        <label>ID пользователя:</label>
+                        <input type="number" id="updateUserId" placeholder="Введите ID" min="1">
+                    </div>
+                    <div class="form-group">
+                        <label>Новое имя:</label>
+                        <input type="text" id="updateUserName" placeholder="Введите новое имя">
+                    </div>
+                    <div class="form-group">
+                        <label>Новый email:</label>
+                        <input type="email" id="updateUserEmail" placeholder="Введите новый email">
+                    </div>`;
+                    break;
+                case 'delete':
+                    html = `<div class="form-group">
+                        <label>ID пользователя:</label>
+                        <input type="number" id="deleteUserId" placeholder="Введите ID" min="1">
+                    </div>`;
+                    break;
+            }
+
+            formDiv.innerHTML = html;
+        }
+
+        function updateTaskForm() {
+            const action = document.getElementById('taskAction').value;
+            const formDiv = document.getElementById('taskForm');
+            let html = '';
+
+            switch(action) {
+                case 'create':
+                    html = `<div class="form-group">
+                        <label>Название задачи:</label>
+                        <input type="text" id="taskTitle" placeholder="Введите название">
+                    </div>
+                    <div class="form-group">
+                        <label><input type="checkbox" id="taskCompleted"> Выполнена</label>
+                    </div>`;
+                    break;
+                case 'update':
+                    html = `<div class="form-group">
+                        <label>ID задачи:</label>
+                        <input type="number" id="updateTaskId" placeholder="Введите ID" min="1">
+                    </div>
+                    <div class="form-group">
+                        <label>Новое название:</label>
+                        <input type="text" id="updateTaskTitle" placeholder="Введите новое название">
+                    </div>
+                    <div class="form-group">
+                        <label><input type="checkbox" id="updateTaskCompleted"> Выполнена</label>
+                    </div>`;
+                    break;
+                case 'delete':
+                    html = `<div class="form-group">
+                        <label>ID задачи:</label>
+                        <input type="number" id="deleteTaskId" placeholder="Введите ID" min="1">
+                    </div>`;
+                    break;
+            }
+
+            formDiv.innerHTML = html;
+        }
+
+        function toggleProductId() {
+            const action = document.getElementById('productAction').value;
+            const group = document.getElementById('productIdGroup');
+            group.style.display = action === 'getById' ? 'block' : 'none';
+        }
+
+        function executeUserAction() {
+            const action = document.getElementById('userAction').value;
+            let url = BASIC_SERVER + '/api/users';
+            let method = 'GET';
+            let body = null;
+
+            switch(action) {
+                case 'getAll':
+                    break;
+                case 'getById':
+                    const userId = document.getElementById('userId').value;
+                    if (!userId) return alert('Введите ID пользователя');
+                    url += '/' + userId;
+                    break;
+                case 'create':
+                    const name = document.getElementById('userName').value;
+                    const email = document.getElementById('userEmail').value;
+                    if (!name || !email) return alert('Заполните все поля');
+                    method = 'POST';
+                    body = JSON.stringify({ name, email });
+                    break;
+                case 'update':
+                    const updateId = document.getElementById('updateUserId').value;
+                    if (!updateId) return alert('Введите ID пользователя');
+                    url += '/' + updateId;
+                    method = 'PUT';
+                    body = JSON.stringify({
+                        name: document.getElementById('updateUserName').value,
+                        email: document.getElementById('updateUserEmail').value
+                    });
+                    break;
+                case 'delete':
+                    const deleteId = document.getElementById('deleteUserId').value;
+                    if (!deleteId) return alert('Введите ID пользователя');
+                    url += '/' + deleteId;
+                    method = 'DELETE';
+                    break;
+            }
+
+            makeRequest(url, method, body);
+        }
+
+        function executeProductAction() {
+            const action = document.getElementById('productAction').value;
+            let url = BASIC_SERVER + '/api/products';
+
+            if (action === 'getById') {
+                const productId = document.getElementById('productId').value;
+                if (!productId) return alert('Введите ID товара');
+                url += '/' + productId;
+            }
+
+            makeRequest(url, 'GET');
+        }
+
+        function executeSearch() {
+            const query = document.getElementById('searchQuery').value;
+            if (!query) return alert('Введите поисковый запрос');
+            const url = `${BASIC_SERVER}/api/search?q=${encodeURIComponent(query)}`;
+            makeRequest(url, 'GET');
+        }
+
+        function executeTaskAction() {
+            const action = document.getElementById('taskAction').value;
+            let url = ADVANCED_SERVER + '/api/tasks';
+            let method = 'GET';
+            let body = null;
+
+            switch(action) {
+                case 'getAll':
+                    break;
+                case 'create':
+                    const title = document.getElementById('taskTitle').value;
+                    if (!title) return alert('Введите название задачи');
+                    method = 'POST';
+                    body = JSON.stringify({
+                        title,
+                        completed: document.getElementById('taskCompleted').checked
+                    });
+                    break;
+                case 'update':
+                    const updateId = document.getElementById('updateTaskId').value;
+                    if (!updateId) return alert('Введите ID задачи');
+                    url += '/' + updateId;
+                    method = 'PUT';
+                    body = JSON.stringify({
+                        title: document.getElementById('updateTaskTitle').value,
+                        completed: document.getElementById('updateTaskCompleted').checked
+                    });
+                    break;
+                case 'delete':
+                    const deleteId = document.getElementById('deleteTaskId').value;
+                    if (!deleteId) return alert('Введите ID задачи');
+                    url += '/' + deleteId;
+                    method = 'DELETE';
+                    break;
+            }
+
+            makeRequest(url, method, body);
+        }
+
+        function getServerStats() {
+            makeRequest(ADVANCED_SERVER + '/api/stats', 'GET');
+        }
+
+        function getServerInfo() {
+            makeRequest(BASIC_SERVER + '/api/info', 'GET');
+        }
+
+        function makeRequest(url, method, body = null) {
+            requestCount++;
+            document.getElementById('requestCount').textContent = requestCount;
+
+            const options = {
+                method: method,
+                headers: { 'Content-Type': 'application/json' }
+            };
+
+            if (body) options.body = body;
+
+            fetch(url, options)
+                .then(async response => {
+                    const data = await response.json();
+                    displayResponse({
+                        url: url,
+                        method: method,
+                        status: response.status,
+                        data: data,
+                        timestamp: new Date().toLocaleString('ru-RU')
+                    }, response.status);
+                })
+                .catch(error => {
+                    displayResponse({
+                        error: error.message,
+                        timestamp: new Date().toLocaleString('ru-RU')
+                    }, 0);
+                });
+        }
+
+        function displayResponse(data, status) {
+            const responseDiv = document.getElementById('response');
+            const statusClass = status >= 200 && status < 300 ? 'status-2xx' :
+                              status >= 400 && status < 500 ? 'status-4xx' : 'status-5xx';
+            const statusBadge = status ? `<span class="status-badge ${statusClass}">${status}</span>` : '';
+
+            responseDiv.innerHTML = `
+                <div style="margin-bottom: 15px;">
+                    <strong>${data.method} ${data.url}</strong> ${statusBadge}
+                </div>
+                <div style="color: #95a5a6; margin-bottom: 15px;">
+                    ${data.timestamp}
+                </div>
+                <pre style="white-space: pre-wrap;">${JSON.stringify(data.data || data.error, null, 2)}</pre>
+            `;
+        }
+
+        function checkServersStatus() {
+            // Проверка базового сервера
+            fetch(BASIC_SERVER + '/api/info')
+                .then(r => {
+                    document.getElementById('basicStatus').textContent = r.ok ? '🟢 Online' : '🔴 Offline';
+                    document.getElementById('basicStatus').className = r.ok ? 'status-value online' : 'status-value offline';
+                })
+                .catch(() => {
+                    document.getElementById('basicStatus').textContent = '🔴 Offline';
+                    document.getElementById('basicStatus').className = 'status-value offline';
+                });
+
+            // Проверка продвинутого сервера
+            fetch(ADVANCED_SERVER + '/api/stats')
+                .then(r => {
+                    document.getElementById('advancedStatus').textContent = r.ok ? '🟢 Online' : '🔴 Offline';
+                    document.getElementById('advancedStatus').className = r.ok ? 'status-value online' : 'status-value offline';
+                })
+                .catch(() => {
+                    document.getElementById('advancedStatus').textContent = '🔴 Offline';
+                    document.getElementById('advancedStatus').className = 'status-value offline';
+                });
+        }
+    </script>
+</body>
+</html>

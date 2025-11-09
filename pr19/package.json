@@ -1,0 +1,14 @@
+{
+  "name": "nodejs-server-pr19",
+  "version": "1.0.0",
+  "description": "Практическая работа №19 - создание сервера на Node.js",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "advanced": "node advanced-server.js",
+    "dev": "node server.js"
+  },
+  "keywords": ["nodejs", "server", "http"],
+  "author": "Студент",
+  "license": "MIT"
+}

@@ -1,0 +1,175 @@
+{
+  "info": {
+    "name": "Node.js Server PR19",
+    "description": "Коллекция запросов для тестирования сервера Node.js",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Базовый сервер",
+      "item": [
+        {
+          "name": "Главная страница",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "http://localhost:3000/"
+          }
+        },
+        {
+          "name": "Получить всех пользователей",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "http://localhost:3000/api/users"
+          }
+        },
+        {
+          "name": "Получить пользователя по ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "http://localhost:3000/api/users/1"
+          }
+        },
+        {
+          "name": "Создать пользователя",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Новый пользователь\",\n  \"email\": \"new@example.com\"\n}"
+            },
+            "url": "http://localhost:3000/api/users"
+          }
+        },
+        {
+          "name": "Обновить пользователя",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Обновленное имя\",\n  \"email\": \"updated@example.com\"\n}"
+            },
+            "url": "http://localhost:3000/api/users/1"
+          }
+        },
+        {
+          "name": "Удалить пользователя",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "http://localhost:3000/api/users/1"
+          }
+        },
+        {
+          "name": "Получить все товары",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "http://localhost:3000/api/products"
+          }
+        },
+        {
+          "name": "Поиск",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "http://localhost:3000/api/search?q=ноутбук"
+          }
+        },
+        {
+          "name": "Информация о сервере",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "http://localhost:3000/api/info"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Продвинутый сервер",
+      "item": [
+        {
+          "name": "Главная страница",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "http://localhost:3001/"
+          }
+        },
+        {
+          "name": "Получить все задачи",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "http://localhost:3001/api/tasks"
+          }
+        },
+        {
+          "name": "Создать задачу",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Новая задача\",\n  \"completed\": false\n}"
+            },
+            "url": "http://localhost:3001/api/tasks"
+          }
+        },
+        {
+          "name": "Обновить задачу",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Обновленная задача\",\n  \"completed\": true\n}"
+            },
+            "url": "http://localhost:3001/api/tasks/1"
+          }
+        },
+        {
+          "name": "Удалить задачу",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "http://localhost:3001/api/tasks/1"
+          }
+        },
+        {
+          "name": "Статистика",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "http://localhost:3001/api/stats"
+          }
+        }
+      ]
+    }
+  ]
+}
