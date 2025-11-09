@@ -1,0 +1,20 @@
+{
+  "name": "books-rest-api",
+  "version": "1.0.0",
+  "description": "REST API для управления книгами",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  },
+  "keywords": ["rest", "api", "express", "books"],
+  "author": "Student",
+  "license": "MIT"
+}
